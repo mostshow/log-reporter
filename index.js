@@ -30,7 +30,7 @@
 
     })()
 
-    var ReporterLog = {
+    var LogReporter = {
 
         clientLogSendCount:0,
 
@@ -101,13 +101,13 @@
 
     if (typeof exports != 'undefined' && !exports.nodeType) {
         if (typeof module != 'undefined' && !module.nodeType && module.exports) {
-            exports = module.exports = ReporterLog;
+            exports = module.exports = LogReporter;
         }
-        exports.ReporterLog = ReporterLog;
+        exports.LogReporter = LogReporter;
 
     } else {
 
-        root.ReporterLog = ReporterLog;
+        root.LogReporter = LogReporter;
     }
 
 

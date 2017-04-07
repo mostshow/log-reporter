@@ -40,7 +40,7 @@
                 data.row = row || (evt && evt.errorLine || evt.lineno) || 0;
                 data.src = src;
                 data.level =  "ERROR"
-                data.name = "SCRIPTERROR"
+                data.type = "SCRIPTERROR"
                 if (!!error && !!error.stack) {
                     // 添加堆栈信息，Safari没有error这个参数
                     data.msg = error.stack.toString();
@@ -76,7 +76,7 @@
 
         init : function(config){
             this.config = {
-                url: '',
+                url: 'http://10.16.8.5:3006/api/report/log',
                 sampling: 1,
                 ignore: [],
                 debug: true
@@ -115,7 +115,7 @@
             if(this.clientLogSendCount > this.clientLogSendMax) return;
             if(this.config.debug) return;
 
-            if (!data.name) data.name = "NONE";
+            if (!data.type) data.type = "NONE";
             if (!data.level) data.level = "ERROR";
             if (!data.msg) data.msg = "undefined";
 

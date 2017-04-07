@@ -38,7 +38,7 @@
                 // IE11跟IE10以下的浏览器event对象不一样
                 data.col = col || (evt && evt.errorCharacter || evt.colno) || 0;
                 data.row = row || (evt && evt.errorLine || evt.lineno) || 0;
-                data.src = src;
+                data.sourceFile = src;
                 data.level =  "ERROR"
                 data.type = "SCRIPTERROR"
                 if (!!error && !!error.stack) {

@@ -25,10 +25,48 @@
         return destination;
     }
 
+    function bindError(){
+        root.onerror = function (msg, src, row, col, error) {
 
-    var httpClient = (function(){
+            if (LogReporter.checkIgnoreMsg(msg) || !src) {
+                return true;
+            }
+            var evt = root.event || null;
+            setTimeout(function () {
 
-    })()
+                var data = {};
+                // IE11跟IE10以下的浏览器event对象不一样
+                data.col = col || (evt && evt.errorCharacter || evt.colno) || 0;
+                data.row = row || (evt && evt.errorLine || evt.lineno) || 0;
+                data.src = src;
+                data.level =  "ERROR"
+                data.name = "SCRIPTERROR"
+                if (!!error && !!error.stack) {
+                    // 添加堆栈信息，Safari没有error这个参数
+                    data.msg = error.stack.toString();
+                } else if (!!arguments.callee) {
+                    var ext = [];
+                    var f = arguments.callee.caller, c = 3;
+                    while (f && --c) {
+                        ext.push(f.toString());
+                        if (f === f.caller) {
+                            break;
+                        }
+                        f = f.caller;
+                    };
+                    ext = ext.join(',');
+                    data.msg = ext || (evt && evt.errorMessage || evt.message) || '';
+                }
+
+                evt = null;
+                console.log(LogReporter.needReport())
+                if (LogReporter.needReport()) LogReporter.send(data);
+            });
+
+            return true;
+        };
+
+    }
 
     var LogReporter = {
 
@@ -36,44 +74,83 @@
 
         clientLogSendMax:50,
 
-        noop : function () {},
-
         init : function(config){
             this.config = {
                 url: '',
-                random: 1,
-                onSuccess: this.noop,
-                onError: this.noop,
-                onTimeout: this.noop,
-                ignore: [/Script error/i],
-                debugModel: false
+                sampling: 1,
+                ignore: [],
+                debug: true
             };
             extend(this.config,config)
+            if(!this.config.debug){
+                bindError()
+            }
         },
 
-        send : function(options){
+        info : function(data){
+            data.level = "INFO"
+            this.send(data)
+        },
 
-            if (!options) return;
+        error : function(data){
+            data.level = "ERROR"
+            this.send(data)
+        },
 
-            if (this.clientLogSendCount > this.clientLogSendMax) {
-                return;
-            }
+        warn: function(data){
+            data.level = "WARN"
+            this.send(data)
+        },
 
-            if (!options.name) options.name = "NONE";
-            if (!options.level) options.level = "ERROR";
+        log: function(data){
+            data.level = "LOG"
+            this.send(data)
+        },
+
+        send : function(data){
+
+            var ctx = this;
+
+            if(!data) return;
+            if(this.clientLogSendCount > this.clientLogSendMax) return;
+            if(this.config.debug) return;
+
+            if (!data.name) data.name = "NONE";
+            if (!data.level) data.level = "ERROR";
+            if (!data.msg) data.msg = "undefined";
+
+            this.httpClient({
+                url: ctx.config.url,
+                data: ctx.fixParams(data),
+                onDone: function(){
+                    console.log('send done!')
+                }
+            });
 
             this.clientLogSendCount++;
         },
 
         checkIgnoreMsg : function(msg){
+            for (var i = 0, len = this.config.ignore.length; i < len; i++) {
+                if (config.ignore[i].test(msg)) return true;
+            }
+            return false;
+        },
 
+        httpClient : function(obj){
+            var img = new Image();
+            img.onload = img.onerror = function(data){
+                obj.onDone(data);
+            };
+            img.src = obj.url+"?"+this.concatParams(obj.data);
         },
 
         fixParams : function(params) {
+
             var temp = {
                 referer : root.location.href,
                 resolution : root.screen.width + '*' + root.screen.height,
-                from : root.document.referrer
+                from : root.document.referrer || 'NONE'
             }
 
             return extend(params,temp);
@@ -82,22 +159,17 @@
         concatParams : function(obj) {
             var arr = [];
             for (var key in obj) {
-                if (hasOwnProperty.call(obj, key) && obj[key]) arr.push(key + '=' + encodeURIComponent(obj[key]));
+                if (hasOwnProperty.call(obj, key) && obj[key]) arr.push(encodeURIComponent(key ) + '=' + encodeURIComponent(obj[key]));
             }
+            arr.push("_t=" + (+new Date))
 
             return arr.join('&');
         },
 
-        needReport : function(sampling){
-            // sampling: 0 - 1
-            return Math.random() <= sampling;
+        needReport : function(){
+            return Math.random() < this.config.sampling;
         }
     }
-
-    root.onerror = function (msg, src, row, col, error) {
-
-        return true;
-    };
 
     if (typeof exports != 'undefined' && !exports.nodeType) {
         if (typeof module != 'undefined' && !module.nodeType && module.exports) {

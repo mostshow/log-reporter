@@ -78,6 +78,7 @@
             this.config = {
                 url: 'http://10.16.8.5:3006/api/report/log',
                 sampling: 1,
+                environment: 'pro',
                 ignore: [],
                 debug: true
             };
@@ -146,9 +147,10 @@
         },
 
         fixParams : function(params) {
-
+            var ctx = this;
             var temp = {
                 referer : root.location.href,
+                environment : ctx.environment,
                 resolution : root.screen.width + '*' + root.screen.height,
                 from : root.document.referrer || 'NONE'
             }

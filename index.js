@@ -89,21 +89,25 @@
         },
 
         info : function(data){
+            if(typeof data != 'object') return;
             data.level = "INFO"
             this.send(data)
         },
 
         error : function(data){
+            if(typeof data != 'object') return;
             data.level = "ERROR"
             this.send(data)
         },
 
         warn: function(data){
+            if(typeof data != 'object') return;
             data.level = "WARN"
             this.send(data)
         },
 
         log: function(data){
+            if(typeof data != 'object') return;
             data.level = "LOG"
             this.send(data)
         },

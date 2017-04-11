@@ -112,7 +112,7 @@
 
             var ctx = this;
 
-            if(!data) return;
+            if(typeof data != 'object') return;
             if(this.clientLogSendCount > this.clientLogSendMax) return;
             if(this.config.debug) return;
 
@@ -186,4 +186,6 @@
 
 
 })();
+
+
 

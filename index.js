@@ -76,7 +76,7 @@
 
         init : function(config){
             this.config = {
-                url: 'http://10.16.8.5:3006/api/report/log',
+                url: '',
                 sampling: 1,
                 env: 'pro',
                 ignore: [],
@@ -154,7 +154,7 @@
             var ctx = this;
             var temp = {
                 referer : root.location.href,
-                env : ctx.env,
+                env : ctx.config.env,
                 resolution : root.screen.width + '*' + root.screen.height,
                 from : root.document.referrer || 'NONE'
             }
@@ -187,9 +187,11 @@
 
         root.LogReporter = LogReporter;
     }
-
+    root.LogReporter = LogReporter;
 
 })();
+
+
 
 
 

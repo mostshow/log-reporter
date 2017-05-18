@@ -1,4 +1,5 @@
 # log-reporter
+[![npm](https://img.shields.io/npm/dw/localeval.svg)](https://www.npmjs.com/package/log-reporter)
 
 A lightweight client-side logger, useful for production.
 

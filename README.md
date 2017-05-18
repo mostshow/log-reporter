@@ -1,30 +1,45 @@
 # log-reporter
-log-reporter是一个前端异常监控文件
 
-## Features
+A lightweight client-side logger, useful for production.
 
-- 浏览器引入 && 模块引入
-- 前端错误自动上报
-- 主动上报try-catch异常
+## Logging levels
 
-## back-end
-
-- 可以使用[前端日志收集平台](https://github.com/mostshow/log-reporter-platform),上报url填写 'http://[domain]/api/report/log'，也可以自己开发
-
-## How to use
+There are four levels of logs:
 
 ```javascript
+var log = LogReporter;
 
+log.info('This is info log record');
+log.warn('This is warn log record');
+log.error('This is error log record');
+log.send('This is custom log record');
+```
+
+## Usage
+
+```html
+<script src="dist/logReport.js"></script>
+```
+or
+```javascript
+
+    let FrontLog = require('LogReporter');
     LogReporter.init({
         url: '',
         sampling: 1,
-        env: '平台',
+        env: 'platform',
         ignore: [],
         debug: false
     })
 
 ```
+## back-end
 
+- [log-reporter-platform](https://github.com/mostshow/log-reporter-platform)
+
+## Example
+
+See `test/index.html`.
 
 
 

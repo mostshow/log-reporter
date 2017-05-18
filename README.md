@@ -23,7 +23,7 @@ log.send('This is custom log record');
 or
 ```javascript
 
-    let FrontLog = require('LogReporter');
+    let FrontLog = require('log-reporter');
     LogReporter.init({
         url: '',
         sampling: 1,
